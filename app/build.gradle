@@ -1,4 +1,37 @@
 apply plugin: 'com.android.application'
+apply plugin: 'stringfog'
+
+buildscript {
+    repositories {
+        maven {
+            url uri('../maven')
+        }
+        jcenter()
+        google()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+
+    }
+    dependencies {
+        classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.21'
+        classpath 'com.github.megatronking.stringfog:mgradle-plugin:2.2.1'
+        classpath 'com.github.megatronking.stringfog:minterface:1.1.0'
+        classpath 'com.github.megatronking.stringfog:mxor:1.1.0'
+    }
+}
+
+stringfog {
+    // 这是加解密key，可以自由定义。
+    keyLength 2
+    // 开关
+    enable true
+    debug false
+    // 加解密库的实现类路径，需和上面配置的加解密算法库一致。
+    implementation 'com.github.megatronking.stringfog.xor.StringFogImpl'
+    // 指定需加密的代码包路径，可配置多个，未指定将默认全部加密。
+    fogPackages = ['com.github.megatronking.stringfog']
+}
 
 android {
     compileSdkVersion 28
@@ -12,7 +45,7 @@ android {
     }
     buildTypes {
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -22,4 +55,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.12'
+    implementation project(':stringfog-ext:xor')
 }
